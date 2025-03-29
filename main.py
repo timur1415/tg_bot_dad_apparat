@@ -1,38 +1,52 @@
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import (
+    ApplicationBuilder,
+    ContextTypes,
+    CommandHandler,
+    ConversationHandler,
+    MessageHandler,
+    filters,
+)
 from start import start
-from opros import get_table_eror, get_adres
-(
-GET_TABLE_EROR,
-GET_ADRES,# спрашиваю адрес
-GET_MONEY,#спрашиваю сколько потратил 
-) = range(3)
-
+from opros import get_table_eror, get_address, get_error, get_money, tanks
+from states import GET_TABLE_EROR, GET_ADDRESS, GET_ERROR, GET_MONEY, TANKS
 
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
 )
 
 
+if __name__ == "__main__":
+    application = (
+        ApplicationBuilder()
+        .token("7750373892:AAGAmCy5Kz8fmr3nWRQhVaQPWufDRGTWVoY")
+        .build()
+    )
 
-if __name__ == '__main__':
-    application = ApplicationBuilder().token('7750373892:AAF3YiYv8omzRPMqD0dHumyLtWxIf8pqW10').build()
-    
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
-         states={
-            GET_TABLE_EROR:[MessageHandler(filters.TEXT & ~filters.COMMAND, get_table_eror)],
-            GET_ADRES: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_adres)]
-                 
-        
+        states={
+            GET_TABLE_EROR: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_table_eror)
+            ],
+            GET_ERROR: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_error)
+            ],
+            GET_ADDRESS: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, get_address)
+            ],
+            GET_MONEY: [MessageHandler(filters.TEXT & ~filters.COMMAND,get_money)
+            ],
+            TANKS: [MessageHandler(filters.TEXT & ~filters.COMMAND,tanks)
+            ]
+
         },
-        fallbacks=[CommandHandler('start', start)])
-    
-    
+        fallbacks=[CommandHandler("start", start)],
+    )
 
     application.add_handler(conv_handler)
-    
+
     application.run_polling()
