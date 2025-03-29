@@ -14,7 +14,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from states import GET_ERROR, GET_ADDRESS, GET_MONEY, TANKS
+from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS
 
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,10 +58,23 @@ async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id,
         text="для того что мы могли вернуть вам деньги вы должны скинуть нам свои реквизиты\n\n1. номер телефона/имя получателя/банк\n\n2. номер карты\n\nна выбор два варианта",
     )
-    return TANKS
+    return NO_IN_SP
+
+async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["props"] = update.effective_message.text
+    if context.user_data["trable"] == 'нет в этом списке':
+        await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="поскольку вы выброли что в списке бота нет такой проблемы которая случилась с нашим аппаратом.\n\nопишите проблему\n\nобразец - первое сообщение"
+    )
+        return TANKS
+    elif context.user_data["trable"] != 'нет в этом списке':
+        return TANKS
+    
 
 async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["props"] = update.effective_message.text
+    context.user_data["trable_no_in_in_sp"] = update.effective_message.text
+    print(context.user_data["trable_no_in_in_sp"])
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="спасибо за ваше время мы составим заявку в течение недели всё починим и вернём вам деньги!!!\n\n/start что бы начать заново",

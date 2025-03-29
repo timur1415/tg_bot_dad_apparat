@@ -9,16 +9,10 @@ from telegram.ext import (
     filters,
 )
 
-(
-MAIN_MENU,
-GET_TABLE_EROR,
-GET_ADRES,# спрашиваю адрес
-GET_MONEY,#спрашиваю сколько потратил 
-) = range(4)
-
+from states import GET_TABLE_EROR
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [['клешня не зажимает'], ['кнопка залипла'], [' джойстик не работает'], ['оплатил картой деньги списали и игру не дали'], ['монету взял а игру не начала'], ['взял купюру а игру не начал'], ['застряла игрушка'], ['клешня не открывается'],['нету в это списке']]
+    keyboard = [['клешня не зажимает'], ['кнопка залипла'], [' джойстик не работает'], ['оплатил картой деньги списали и игру не дали'], ['монету взял а игру не начала'], ['взял купюру а игру не начал'], ['застряла игрушка'], ['клешня не открывается'],['нет в этом списке']]
     markup = ReplyKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
