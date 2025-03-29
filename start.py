@@ -22,7 +22,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = ReplyKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="добро пожаловать в тех поддержку аппаратов. что у вас случилось",
+        text=f"добро пожаловать {update.effective_user.first_name}\n\nчто случилось?",
         reply_markup=markup,
     )
     
