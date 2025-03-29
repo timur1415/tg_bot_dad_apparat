@@ -1,34 +1,33 @@
-import logging
 from telegram import (
     Update,
     ReplyKeyboardMarkup,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     ReplyKeyboardRemove,
 )
 from telegram.ext import (
-    ApplicationBuilder,
     ContextTypes,
-    CommandHandler,
-    ConversationHandler,
-    MessageHandler,
-    filters,
 )
 from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS
 
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["trable"] = update.effective_message.text
-    print(context.user_data["trable"])
-    keyboard = [["01", "02", "03", "04", "нету"]]
-    markup = ReplyKeyboardMarkup(keyboard)
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open("photo/table.jpg", "rb"),
-        caption="посмотрите пожалуйста есть ли на табло которое показано на фото(там где нолик) ошибка которая днна на клавиотуре",
-        reply_markup=markup
-    )
-    return GET_ERROR
+    if update.effective_message.text != 'нет в этом списке':
+        context.user_data["trable"] = update.effective_message.text
+        print(context.user_data["trable"])
+        keyboard = [["01", "02", "03", "04", "нет"]]
+        markup = ReplyKeyboardMarkup(keyboard)
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=open("photo/table.jpg", "rb"),
+            caption="Посмотрите, пожалуйста, есть ли на табло (которое показано на фото, там где ноль) ошибка, которая дана на клавиатуре.",
+            reply_markup=markup
+        )
+        return GET_ERROR
+    else:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Пожалуйста, сформулируйте проблему, чтобы мы могли внести её в бота.",reply_markup=ReplyKeyboardRemove()
+        )
+        return NO_IN_SP
 
 
 async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -37,7 +36,7 @@ async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(context.user_data["table_eror"])
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="попробуйте выключить из разетки и включить обратно, если не помогло то выключите из разетки и напиши адрес и номер автомата\n\nгород/улица номер",reply_markup=ReplyKeyboardRemove()
+        text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, полностью отключите питание и сообщите адрес и номер автомата.\n\nгород/улица номер.",reply_markup=ReplyKeyboardRemove()
     )
     return GET_ADDRESS
 
@@ -46,7 +45,7 @@ async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["address"] = update.effective_message.text
     print(context.user_data["address"])
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text="сколько потратил"
+        chat_id=update.effective_chat.id, text="сколько вы потратили?"
     )
     return GET_MONEY
 
@@ -56,20 +55,22 @@ async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(context.user_data["money"])
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="для того что мы могли вернуть вам деньги вы должны скинуть нам свои реквизиты\n\n1. номер телефона/имя получателя/банк\n\n2. номер карты\n\nна выбор два варианта",
+        text="Для возврата денег необходимо предоставить реквизиты ❗️В ОДНОМ СООБЩЕНИИ❗️\n\n1. Номер телефона, имя получателя и банк\n\n2. Номер карты\n\nДоступно два варианта оформления",
     )
-    return NO_IN_SP
+    return  TANKS
 
 async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["props"] = update.effective_message.text
-    if context.user_data["trable"] == 'нет в этом списке':
-        await context.bot.send_message(
+    context.user_data["trable"] = update.effective_message.text
+    print(context.user_data["trable"])
+    keyboard = [["01", "02", "03", "04", "нет"]]
+    markup = ReplyKeyboardMarkup(keyboard)
+    await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        text="поскольку вы выброли что в списке бота нет такой проблемы которая случилась с нашим аппаратом.\n\nопишите проблему\n\nобразец - первое сообщение"
+        photo=open("photo/table.jpg", "rb"),
+        caption="Посмотрите, пожалуйста, есть ли на табло (которое показано на фото, там где ноль) ошибка, которая дана на клавиатуре.",
+        reply_markup=markup
     )
-        return TANKS
-    elif context.user_data["trable"] != 'нет в этом списке':
-        return TANKS
+    return GET_ERROR
     
 
 async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -77,5 +78,10 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(context.user_data["trable_no_in_in_sp"])
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="спасибо за ваше время мы составим заявку в течение недели всё починим и вернём вам деньги!!!\n\n/start что бы начать заново",
+        text="Благодарим за обращение! Заявка будет оформлена в течение недели. Мы устраним неисправность и вернём вам средства.\n\nИспользуйте /start для нового обращения",
     )
+    
+    # await context.bot.send_message(
+    #     chat_id=5638073006,
+    #     text="спасибо за ваше время мы составим заявку в течение недели всё починим и вернём вам деньги!!!\n\n/start что бы начать заново",
+    # )
