@@ -9,6 +9,9 @@ from telegram.ext import (
 from start import start
 from opros import get_table_eror, get_address, get_error, get_money, tanks, no_in_sp
 from states import GET_TABLE_EROR, GET_ADDRESS, GET_ERROR, GET_MONEY, TANKS, NO_IN_SP
+import os 
+from dotenv import load_dotenv
+load_dotenv()
 
 
 logging.basicConfig(
@@ -20,7 +23,7 @@ logging.basicConfig(
 if __name__ == "__main__":
     application = (
         ApplicationBuilder()
-        .token("7750373892:AAGAmCy5Kz8fmr3nWRQhVaQPWufDRGTWVoY")
+        .token(os.getenv("TOKEN"))
         .build()
     )
 
