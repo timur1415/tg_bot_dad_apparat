@@ -8,6 +8,9 @@ from telegram.ext import (
 )
 from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_message.text != "нет в этом списке":
@@ -22,6 +25,7 @@ async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=markup,
         )
         return GET_ERROR
+    
     else:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -94,13 +98,13 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "клешня не открывается",
         "нет в этом списке",
     ]
-
     await context.bot.send_message(
-        chat_id=431425615,
+        chat_id=int(os.getenv('ADMIN_ID')),
         text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
     )
+
     if context.user_data["trable"] not in keyboard:
         await context.bot.send_message(
-            chat_id=1668408264,
-            text=f"добавить проблему в бота {context.user_data['trable']}",
+            chat_id=int(os.getenv('MY_ID')),
+            text=f"добавить проблему в бота:\n\n{context.user_data['trable']}",
         )

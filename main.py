@@ -5,6 +5,7 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
+    PicklePersistence,
 )
 from start import start
 from opros import get_table_eror, get_address, get_error, get_money, tanks, no_in_sp
@@ -21,9 +22,10 @@ logging.basicConfig(
 
 
 if __name__ == "__main__":
+    perrsistece = PicklePersistence(filepath="apparat_bot")
     application = (
         ApplicationBuilder()
-        .token(os.getenv("TOKEN"))
+        .token(os.getenv("TOKEN")).persistence(perrsistece)
         .build()
     )
 
@@ -44,10 +46,12 @@ if __name__ == "__main__":
             NO_IN_SP: [MessageHandler(filters.TEXT & ~filters.COMMAND,no_in_sp)
             ],
             TANKS: [MessageHandler(filters.TEXT & ~filters.COMMAND,tanks)
-            ]
+            ],
 
         },
         fallbacks=[CommandHandler("start", start)],
+        name="apparat_bot",
+        persistent=True
     )
 
     application.add_handler(conv_handler)
