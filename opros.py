@@ -6,11 +6,26 @@ from telegram import (
 from telegram.ext import (
     ContextTypes,
 )
-from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS
+from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS, TANKS_NO_BYE
 
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
+
+async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_name = update.effective_user.name
+    await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="В ближайшее время с вами свяжется наш специалист. Вы сможете отправить ему фото застрявшей игрушки, и он подскажет, как решить проблему. Если ничего не получится — гарантируем возврат денег.\n\nДавайте разберёмся вместе! 😊",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+    
+    await context.bot.send_message(
+            chat_id=int(os.getenv('MY_ID')),
+            text=f'{user_name} - у этого типа игрушка застряла нужно помочь')
+
+    return TANKS_NO_BYE
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_message.text != "нет в этом списке":
@@ -102,7 +117,6 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=int(os.getenv('ADMIN_ID')),
         text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
     )
-
     if context.user_data["trable"] not in keyboard:
         await context.bot.send_message(
             chat_id=int(os.getenv('MY_ID')),

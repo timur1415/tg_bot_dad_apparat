@@ -8,8 +8,8 @@ from telegram.ext import (
     PicklePersistence,
 )
 from start import start
-from opros import get_table_eror, get_address, get_error, get_money, tanks, no_in_sp
-from states import GET_TABLE_EROR, GET_ADDRESS, GET_ERROR, GET_MONEY, TANKS, NO_IN_SP
+from opros import get_table_eror, get_address, get_error, get_money, tanks, no_in_sp, toys
+from states import GET_TABLE_EROR, GET_ADDRESS, GET_ERROR, GET_MONEY, TANKS, NO_IN_SP, TOYS
 import os 
 from dotenv import load_dotenv
 load_dotenv()
@@ -45,9 +45,10 @@ if __name__ == "__main__":
             ],
             NO_IN_SP: [MessageHandler(filters.TEXT & ~filters.COMMAND,no_in_sp)
             ],
+            TOYS: [MessageHandler(filters.TEXT & ~filters.COMMAND, toys)
+            ],
             TANKS: [MessageHandler(filters.TEXT & ~filters.COMMAND,tanks)
             ],
-
         },
         fallbacks=[CommandHandler("start", start)],
         name="apparat_bot",

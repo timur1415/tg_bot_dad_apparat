@@ -6,5 +6,6 @@ GET_ADDRESS,# спрашиваю адрес
 GET_MONEY,#спрашиваю сколько потратил 
 NO_IN_SP,
 GET_CRED,
-TANKS
-) = range(8)
+TOYS,
+TANKS,
+) = range(9)
