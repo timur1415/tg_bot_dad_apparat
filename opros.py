@@ -2,11 +2,13 @@ from telegram import (
     Update,
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
 )
 from telegram.ext import (
     ContextTypes,
 )
-from states import GET_ERROR, GET_ADDRESS, GET_MONEY, NO_IN_SP, TANKS, TANKS_NO_BYE
+from states import GET_ERROR, GET_ADDRESS, GET_MONEY, GET_TABLE_EROR, TANKS
 
 import os
 from dotenv import load_dotenv
@@ -14,6 +16,8 @@ load_dotenv()
 
 
 async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
     user_name = update.effective_user.name
     await context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -25,12 +29,12 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=int(os.getenv('MY_ID')),
             text=f'{user_name} - у этого типа игрушка застряла нужно помочь')
 
-    return TANKS_NO_BYE
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_message.text != "нет в этом списке":
-        context.user_data["trable"] = update.effective_message.text
-        print(context.user_data["trable"])
+    context.user_data["trable"] = update.effective_message.text
+    print(context.user_data["trable"])
+    query = update.callback_query
+    if query:
         keyboard = [["01", "02", "03", "04", "нет"]]
         markup = ReplyKeyboardMarkup(keyboard)
         await context.bot.send_photo(
@@ -39,29 +43,27 @@ async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption="Посмотрите, пожалуйста, есть ли на табло (которое показано на фото, там где ноль) ошибка, которая дана на клавиатуре.",
             reply_markup=markup,
         )
-        return GET_ERROR
-    
     else:
-        await context.bot.send_message(
+        keyboard = [["01", "02", "03", "04", "нет"]]
+        markup = ReplyKeyboardMarkup(keyboard)
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=open("photo/table.jpg", "rb"),
+            caption="Посмотрите, пожалуйста, есть ли на табло (которое показано на фото, там где ноль) ошибка, которая дана на клавиатуре.",
+            reply_markup=markup,
+        )
+    return GET_ERROR
+    
+async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="Пожалуйста, сформулируйте проблему, чтобы мы могли внести её в бота.",
             reply_markup=ReplyKeyboardRemove(),
         )
-        return NO_IN_SP
-
-
-async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["trable"] = update.effective_message.text
-    print(context.user_data["trable"])
-    keyboard = [["01", "02", "03", "04", "нет"]]
-    markup = ReplyKeyboardMarkup(keyboard)
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open("photo/table.jpg", "rb"),
-        caption="Посмотрите, пожалуйста, есть ли на табло (которое показано на фото, там где ноль) ошибка, которая дана на клавиатуре.",
-        reply_markup=markup,
-    )
-    return GET_ERROR
+    return GET_TABLE_EROR
+    
 
 
 async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -96,13 +98,15 @@ async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [[InlineKeyboardButton('описать проблему заново', callback_data='exit')]]
+    markup = InlineKeyboardMarkup(keyboard)
     context.user_data["rek"] = update.effective_message.text
     print(context.user_data["rek"])
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Благодарим за обращение! Заявка будет оформлена в течение недели. Мы устраним неисправность и вернём вам средства.\n\nИспользуйте /start для нового обращения",
+        text="Благодарим за обращение! Заявка будет оформлена в течение недели. Мы устраним неисправность и вернём вам средства.\n\nИспользуйте /start для нового обращения",reply_markup=markup
     )
-    keyboard = [
+    sp = [
         "клешня не закрывается",
         "кнопка залипла",
         "джойстик не работает",
@@ -113,12 +117,12 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "клешня не открывается",
         "нет в этом списке",
     ]
-    await context.bot.send_message(
-        chat_id=int(os.getenv('ADMIN_ID')),
-        text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
-    )
-    if context.user_data["trable"] not in keyboard:
-        await context.bot.send_message(
-            chat_id=int(os.getenv('MY_ID')),
-            text=f"добавить проблему в бота:\n\n{context.user_data['trable']}",
-        )
+    # await context.bot.send_message(
+    #     chat_id=int(os.getenv('MY_ID')),
+    #     text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
+    # )
+    # if context.user_data["trable"] not in sp:
+    #     await context.bot.send_message(
+    #         chat_id=int(os.getenv('MY_ID')),
+    #         text=f"добавить проблему в бота:\n\n{context.user_data['trable']}",
+    #     )
