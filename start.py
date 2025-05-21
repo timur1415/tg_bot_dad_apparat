@@ -50,4 +50,4 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
             reply_markup=markup,
         )
-        return MAIN_MENU
+    return MAIN_MENU

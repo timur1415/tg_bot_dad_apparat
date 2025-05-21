@@ -16,13 +16,15 @@ load_dotenv()
 
 
 async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [[InlineKeyboardButton('описать проблему заново', callback_data='back')]]
+    markup = InlineKeyboardMarkup(keyboard)
     query = update.callback_query
     await query.answer()
     user_name = update.effective_user.name
     await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="В ближайшее время с вами свяжется наш специалист. Вы сможете отправить ему фото застрявшей игрушки, и он подскажет, как решить проблему. Если ничего не получится — гарантируем возврат денег.\n\nДавайте разберёмся вместе! 😊",
-            reply_markup=ReplyKeyboardRemove(),
+            reply_markup=markup,
         )
     
     await context.bot.send_message(
