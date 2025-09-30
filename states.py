@@ -8,4 +8,6 @@ NO_IN_SP,
 GET_CRED,
 TOYS,
 TANKS,
-) = range(9)
+BANKNOTE,
+RESTART
+) = range(11)

@@ -38,8 +38,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     markup = InlineKeyboardMarkup(keyboard)
     if query:
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
+        await query.edit_message_text(
             text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
             reply_markup=markup,
         )

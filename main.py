@@ -17,7 +17,11 @@ from opros import (
     tanks,
     no_in_sp,
     toys,
+    banknote,
+    banknote_handler
 )
+import asyncio
+
 from states import (
     GET_TABLE_EROR,
     GET_ADDRESS,
@@ -27,7 +31,12 @@ from states import (
     NO_IN_SP,
     TOYS,
     MAIN_MENU,
+    BANKNOTE,
+    RESTART
 )
+
+from database import engine, Base
+
 import os
 from dotenv import load_dotenv
 
@@ -38,7 +47,12 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
+logger = logging.getLogger(__name__)
 
+async def setup_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info('бд создана')
 
 if __name__ == "__main__":
     perrsistece = PicklePersistence(filepath="apparat_bot")
@@ -51,12 +65,12 @@ if __name__ == "__main__":
         states={
             MAIN_MENU: [
                 CallbackQueryHandler(toys, pattern="^toys$"),
-                CallbackQueryHandler(get_table_eror, pattern="^dont_clos$"),
-                CallbackQueryHandler(get_table_eror, pattern="^tap$"),
+                CallbackQueryHandler(get_address, pattern="^dont_clos$"),
+                CallbackQueryHandler(get_address, pattern="^tap$"),
                 CallbackQueryHandler(get_table_eror, pattern="^dont_work$"),
                 CallbackQueryHandler(get_table_eror, pattern="^banc card$"),
                 CallbackQueryHandler(get_table_eror, pattern="^coin$"),
-                CallbackQueryHandler(get_table_eror, pattern="^money$"),
+                CallbackQueryHandler(banknote, pattern="^money$"),
                 CallbackQueryHandler(get_table_eror, pattern="^dont_close$"),
                 CallbackQueryHandler(no_in_sp, pattern="no_in_sp"),
             ],
@@ -71,6 +85,7 @@ if __name__ == "__main__":
                    CallbackQueryHandler(start, pattern='^back$')],
             TANKS: [MessageHandler(filters.TEXT & ~filters.COMMAND, tanks),
                     CallbackQueryHandler(start, pattern='^exit$')],
+            BANKNOTE: [MessageHandler(filters.TEXT & ~filters.COMMAND, banknote_handler)]
         },
         fallbacks=[CommandHandler("start", start)],
         name="apparat_bot",
@@ -78,5 +93,7 @@ if __name__ == "__main__":
     )
 
     application.add_handler(conv_handler)
+
+    application.post_init = lambda _: asyncio.create_task(setup_db())
 
     application.run_polling()
