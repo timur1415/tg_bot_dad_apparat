@@ -35,7 +35,7 @@ from states import (
     RESTART
 )
 
-from database import engine, Base
+
 
 import os
 from dotenv import load_dotenv
@@ -49,10 +49,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-async def setup_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info('бд создана')
 
 if __name__ == "__main__":
     perrsistece = PicklePersistence(filepath="apparat_bot")
@@ -93,7 +89,5 @@ if __name__ == "__main__":
     )
 
     application.add_handler(conv_handler)
-
-    application.post_init = lambda _: asyncio.create_task(setup_db())
 
     application.run_polling()
