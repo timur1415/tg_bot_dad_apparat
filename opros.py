@@ -59,7 +59,7 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_message(
         chat_id=int(os.getenv("MY_ID")),
-        text=f"{user_name} - у этого типа игрушка застряла нужно помочь",
+        text=f"{user_name} - у него застряла игрушка нужна помощь",
     )
     return TOYS
 
@@ -97,7 +97,7 @@ async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text="Пожалуйста, сформулируйте проблему, чтобы мы могли внести её в бота.",
         reply_markup=ReplyKeyboardRemove(),
     )
-    return GET_TABLE_EROR
+    return TANKS
 
 
 async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -132,7 +132,7 @@ async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("описать проблему заново", callback_data="exit")]]
+    keyboard = [[InlineKeyboardButton("Описать ещё одну проблему", callback_data="exit")]]
     markup = InlineKeyboardMarkup(keyboard)
     context.user_data["rek"] = update.effective_message.text
     print(context.user_data["rek"])
@@ -156,8 +156,10 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=int(os.getenv("MY_ID")),
         text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
     )
+    
     if context.user_data["trable"] not in sp:
         await context.bot.send_message(
             chat_id=int(os.getenv("MY_ID")),
             text=f"добавить проблему в бота:\n\n{context.user_data['trable']}",
         )
+
