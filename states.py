@@ -1,5 +1,5 @@
 (
-MAIN_MENU,
+SECURITY,
 GET_TABLE_EROR,
 GET_ERROR,
 GET_ADDRESS,# спрашиваю адрес

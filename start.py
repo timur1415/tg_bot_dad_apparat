@@ -8,45 +8,55 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from states import MAIN_MENU
+
+
+from opros import toys, get_address, get_table_eror, banknote, no_in_sp
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     keyboard = [
-        [InlineKeyboardButton("Клешня не закрывается", callback_data="dont_clos")],
-        [InlineKeyboardButton("Кнопка залипла", callback_data="tap")],
-        [InlineKeyboardButton("Джойстик не работает", callback_data="dont_work")],
-        [
-            InlineKeyboardButton(
-                "После оплаты картой игра не началась", callback_data="banc card"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "После оплаты монетой игра не началась", callback_data="coin"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "После оплаты купюрой игра не началась", callback_data="money"
-            )
-        ],
-        [InlineKeyboardButton("Застряла игрушка", callback_data="toys")],
-        [InlineKeyboardButton("Клешня не открывается", callback_data="dont_close")],
-        [InlineKeyboardButton("Нет в этом списке", callback_data="no_in_sp")],
+        ["застряла игрушка"],
+        ["клешня не открывается"],
+        ["кнопка залипла"],
+        ["Джойстик не работает"],
+        ["После оплаты картой игра не началась"],
+        ["После оплаты монетой игра не началась"],
+        ["После оплаты купюрой игра не началась"],
+        ["Клешня не закрывается"],
+        ["нет в этом списке"],
     ]
-    markup = InlineKeyboardMarkup(keyboard)
-    if query:
-        await query.edit_message_text(
-            text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
-            reply_markup=markup,
-        )
+    markup = ReplyKeyboardMarkup(keyboard)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+        text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
+        reply_markup=markup,
+    )
 
+async def security(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data['main_trable'] = update.effective_message.text
+    if context.user_data['main_trable'] == 'застряла игрушка':
+        return toys
+    elif context.user_data['main_trable'] == 'Клешня не открывается':
+        return get_address
+    elif context.user_data['main_trable'] == 'Кнопка залипла':
+        return get_address
+    elif context.user_data['main_trable'] == 'Джойстик не работает':
+        return get_table_eror
+    elif context.user_data['main_trable'] == 'После оплаты картой игра не началась':
+        return get_table_eror
+    elif context.user_data['main_trable'] == 'После оплаты монетой игра не началась':
+        return get_table_eror
+    elif context.user_data['main_trable'] == 'После оплаты купюрой игра не началась':
+        return banknote
+    elif context.user_data['main_trable'] == 'Клешня не закрывается':
+        return get_table_eror
+    elif context.user_data['main_trable']  == 'нет в этом списке':
+        return no_in_sp
     else:
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
-            reply_markup=markup,
-        )
-    return MAIN_MENU
+        return dif
+    
+async def dif(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Иди нах клоун",
+    )

@@ -8,7 +8,7 @@ from telegram.ext import (
     PicklePersistence,
     CallbackQueryHandler,
 )
-from start import start
+from start import start, security
 from opros import (
     get_table_eror,
     get_address,
@@ -30,7 +30,7 @@ from states import (
     TANKS,
     NO_IN_SP,
     TOYS,
-    MAIN_MENU,
+    SECURITY,
     BANKNOTE,
     RESTART
 )
@@ -59,17 +59,7 @@ if __name__ == "__main__":
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            MAIN_MENU: [
-                CallbackQueryHandler(toys, pattern="^toys$"),
-                CallbackQueryHandler(get_address, pattern="^dont_clos$"),
-                CallbackQueryHandler(get_address, pattern="^tap$"),
-                CallbackQueryHandler(get_table_eror, pattern="^dont_work$"),
-                CallbackQueryHandler(get_table_eror, pattern="^banc card$"),
-                CallbackQueryHandler(get_table_eror, pattern="^coin$"),
-                CallbackQueryHandler(banknote, pattern="^money$"),
-                CallbackQueryHandler(get_table_eror, pattern="^dont_close$"),
-                CallbackQueryHandler(no_in_sp, pattern="no_in_sp"),
-            ],
+            SECURITY:[MessageHandler(filters.TEXT & ~filters.COMMAND, security)],
             GET_TABLE_EROR: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, get_table_eror)
             ],
