@@ -20,11 +20,14 @@ from states import (
 
 import os
 from dotenv import load_dotenv
+from problems import dic_problems
 
 load_dotenv()
 
 
 async def banknote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    query.answer()
     keyboard = [["🔴", "🟢"]]
     markup = ReplyKeyboardMarkup(keyboard)
     await context.bot.send_message(
@@ -65,9 +68,11 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["trable"] = update.effective_message.text
-    print(context.user_data["trable"])
+
     query = update.callback_query
+    await query.answer()
+    context.user_data["trable"] = dic_problems[query.data]
+    print(context.user_data["trable"])
     if query:
         keyboard = [["01", "02", "03", "04", "нет"]]
         markup = ReplyKeyboardMarkup(keyboard)
@@ -113,11 +118,20 @@ async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    query.answer()
+    context.user_data["trable"] = dic_problems[query.data]
     context.user_data["address"] = update.effective_message.text
     print(context.user_data["address"])
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text="сколько вы потратили?"
-    )
+    if query:
+        context.user_data["trable"] = dic_problems[query.data]
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text="сколько вы потратили?"
+        )
+    else:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text="сколько вы потратили?"
+        )
     return GET_MONEY
 
 
