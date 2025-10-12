@@ -9,16 +9,16 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 from start import start
+
 from opros import (
     get_table_eror,
     get_address,
-    get_error,
     get_money,
     tanks,
     no_in_sp,
     toys,
     banknote,
-    banknote_handler
+    get_rek
 )
 import asyncio
 
@@ -31,8 +31,8 @@ from states import (
     NO_IN_SP,
     TOYS,
     MAIN_MENU,
-    BANKNOTE,
-    RESTART
+    GET_REK,
+    BANKNOTE
 )
 
 
@@ -73,7 +73,6 @@ if __name__ == "__main__":
             GET_TABLE_EROR: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, get_table_eror)
             ],
-            GET_ERROR: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_error)],
             GET_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_address)],
             GET_MONEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_money)],
             NO_IN_SP: [MessageHandler(filters.TEXT & ~filters.COMMAND, no_in_sp)],
@@ -81,7 +80,8 @@ if __name__ == "__main__":
                    CallbackQueryHandler(start, pattern='^back$')],
             TANKS: [MessageHandler(filters.TEXT & ~filters.COMMAND, tanks),
                     CallbackQueryHandler(start, pattern='^exit$')],
-            BANKNOTE: [MessageHandler(filters.TEXT & ~filters.COMMAND, banknote_handler)]
+            BANKNOTE:[MessageHandler(filters.TEXT & ~filters.COMMAND, banknote)],
+            GET_REK: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_rek)]
         },
         fallbacks=[CommandHandler("start", start)],
         name="apparat_bot",

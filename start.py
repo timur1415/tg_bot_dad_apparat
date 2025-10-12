@@ -12,6 +12,7 @@ from states import MAIN_MENU
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.clear()
     query = update.callback_query
     keyboard = [
         [InlineKeyboardButton("Клешня не закрывается", callback_data="dont_clos")],

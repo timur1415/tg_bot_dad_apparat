@@ -9,5 +9,6 @@ GET_CRED,
 TOYS,
 TANKS,
 BANKNOTE,
-RESTART
-) = range(11)
+RESTART,
+GET_REK,
+) = range(12)

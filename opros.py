@@ -15,7 +15,7 @@ from states import (
     GET_TABLE_EROR,
     TANKS,
     TOYS,
-    BANKNOTE,
+    GET_REK
 )
 
 import os
@@ -28,6 +28,7 @@ load_dotenv()
 async def banknote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     query.answer()
+    context.user_data["trable"] = dic_problems[query.data]
     keyboard = [["🔴", "🟢"]]
     markup = ReplyKeyboardMarkup(keyboard)
     await context.bot.send_message(
@@ -36,20 +37,11 @@ async def banknote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=markup,
     )
 
-    return BANKNOTE
-
-
-async def banknote_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["color"] = update.effective_message.text
-    if context.user_data["color"] == "🔴":
-        return GET_ADDRESS
-
-    else:
-        pass
+    return GET_ADDRESS
 
 
 async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("описать проблему заново", callback_data="back")]]
+    keyboard = [[InlineKeyboardButton("описать ещё одну проблему", callback_data="back")]]
     markup = InlineKeyboardMarkup(keyboard)
     query = update.callback_query
     await query.answer()
@@ -68,18 +60,17 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     query = update.callback_query
     await query.answer()
     context.user_data["trable"] = dic_problems[query.data]
     print(context.user_data["trable"])
     if query:
-        keyboard = [["01", "02", "03", "04", "нет"]]
+        keyboard = [["01", "02", "03", "04"],["нет"]]
         markup = ReplyKeyboardMarkup(keyboard)
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
             photo=open("photo/table.jpg", "rb"),
-            caption="Посмотрите, пожалуйста, что гарит на табло и выберете на клавиатуре",
+            caption="Посмотрите, пожалуйста, что горит на табло и выберете на клавиатуре",
             reply_markup=markup,
         )
     else:
@@ -88,10 +79,10 @@ async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
             photo=open("photo/table.jpg", "rb"),
-            caption="Посмотрите, пожалуйста, что гарит на табло и выберете на клавиатуре",
+            caption="Посмотрите, пожалуйста, что горит на табло и выберете на клавиатуре",
             reply_markup=markup,
         )
-    return GET_ERROR
+    return GET_ADDRESS
 
 
 async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -102,40 +93,44 @@ async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text="Пожалуйста, сформулируйте проблему, чтобы мы могли внести её в бота.",
         reply_markup=ReplyKeyboardRemove(),
     )
-    return TANKS
-
-
-async def get_error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_message.text != "нету":
-        context.user_data["table_eror"] = update.effective_message.text
-        print(context.user_data["table_eror"])
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, ❗️ПОЛНОСЬТЮ ОТКЛЮЧИТЕ ПИТАНИЕ❗️ и сообщите адрес и номер автомата.\n\nгород/улица номер.",
-        reply_markup=ReplyKeyboardRemove(),
-    )
     return GET_ADDRESS
 
 
 async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    query.answer()
-    context.user_data["trable"] = dic_problems[query.data]
-    context.user_data["address"] = update.effective_message.text
-    print(context.user_data["address"])
+    
     if query:
+        await query.answer()
         context.user_data["trable"] = dic_problems[query.data]
         await context.bot.send_message(
-            chat_id=update.effective_chat.id, text="сколько вы потратили?"
+            chat_id=update.effective_chat.id,
+            text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, ❗️ПОЛНОСТЬЮ ОТКЛЮЧИТЕ ПИТАНИЕ❗️ и сообщите адрес и номер автомата.\n\nгород/улица номер.",
+            reply_markup=ReplyKeyboardRemove(),
         )
     else:
+        if update.effective_message.text in ["01", "02", "03", "04", "нет"]:
+            context.user_data["table_eror"] = update.effective_message.text
+            print(context.user_data["table_eror"])
+        else:
+             context.user_data["trable"] = update.effective_message.text
         await context.bot.send_message(
-            chat_id=update.effective_chat.id, text="сколько вы потратили?"
+            chat_id=update.effective_chat.id,
+            text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, ❗️ПОЛНОСТЬЮ ОТКЛЮЧИТЕ ПИТАНИЕ❗️ и сообщите адрес и номер автомата.\n\nгород/улица номер.",
+            reply_markup=ReplyKeyboardRemove(),
         )
     return GET_MONEY
 
 
 async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["address"] = update.effective_message.text
+    print(context.user_data["address"])
+    await context.bot.send_message(
+            chat_id=update.effective_chat.id, text="сколько вы потратили?"
+        )
+    return GET_REK
+
+
+async def get_rek(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["money"] = update.effective_message.text
     print(context.user_data["money"])
     await context.bot.send_message(
@@ -155,25 +150,27 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text="Спасибо за заявку! Всё оформим сегодня. Мы устраним неисправность и вернём средства.\n\n❗️ ПРОСИМ ВАС: отсоедините автомат от розетки.\n\nЗаранее спасибо за содействие!",
         reply_markup=markup,
     )
-    sp = [
-        "клешня не закрывается",
-        "кнопка залипла",
-        "джойстик не работает",
-        "после оплаты картой игра не началась",
-        "после оплаты монетой игра не началась",
-        "после оплаты купюрой игра не началась",
-        "застряла игрушка",
-        "клешня не открывается",
-        "нет в этом списке",
-    ]
+    text = ''
+    if context.user_data.get('trable'):
+        text += f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n"
+    if context.user_data.get('table_eror'):
+        text += f"{context.user_data['table_eror']} - ошибка на табло\n\n" 
+    if context.user_data.get('address'):
+        text+=f'{context.user_data['address']}- адрес аппарата\n\n'
+    if context.user_data.get('money'):
+        text+= f'{context.user_data['money']} - сколько человек потратил\n\n'
+    if context.user_data.get('rek'):
+        text+= f'{context.user_data['rek']} - реквизиты человека'
     await context.bot.send_message(
         chat_id=int(os.getenv("MY_ID")),
-        text=f"{context.user_data['trable']} - это проблема которая случилась с ботом\n\n{context.user_data['table_eror']} - ошибка на табло\n\n{context.user_data['address']} - адрес аппарата\n\n{context.user_data['money']} - сколько человек потратил\n\n{context.user_data['rek']} - реквизиты человека",
-    )
+        text=text,
+        )
+
     
-    if context.user_data["trable"] not in sp:
+    if context.user_data["trable"] not in dic_problems.values():
         await context.bot.send_message(
             chat_id=int(os.getenv("MY_ID")),
             text=f"добавить проблему в бота:\n\n{context.user_data['trable']}",
         )
 
+    context.user_data.clear()
