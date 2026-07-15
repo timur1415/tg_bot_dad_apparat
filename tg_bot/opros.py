@@ -21,7 +21,7 @@ from config.states import (
 
 import os
 from dotenv import load_dotenv
-from problems import dic_problems
+from tg_bot.problems import dic_problems
 from db.users_crud import save_request
 
 load_dotenv()

@@ -9,7 +9,7 @@ from telegram.ext import (
 )
 
 from config.config import TOKEN
-from opros import (
+from tg_bot.opros import (
     banknote,
     get_address,
     get_money,
@@ -22,7 +22,7 @@ from opros import (
     tanks,
     toys,
 )
-from start import start
+from tg_bot.start import start
 from config.states import (
     BANKNOTE,
     GET_ADDRESS,

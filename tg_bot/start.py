@@ -2,6 +2,7 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    WebAppInfo
 )
 from telegram.ext import (
     ContextTypes,
@@ -9,8 +10,43 @@ from telegram.ext import (
 
 from config.states import MAIN_MENU
 
+from config.config import WEBHOOK_URL
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+    [
+        InlineKeyboardButton(
+            "Опрос",
+            callback_data="opros"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "Админ панель",
+            web_app=WebAppInfo(
+                url=f"https://{WEBHOOK_URL}/app"
+            )
+        )
+    ],
+]
+
+markup = InlineKeyboardMarkup(keyboard)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="добро пожаловать",
+        reply_markup=markup,
+    )
+    return MAIN_MENU
+
+async def opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    if query:
+        await query.edit_message_text(
+            text="добро пожаловать",
+            reply_markup=markup,
+        )
+
+async def start_opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     query = update.callback_query
     keyboard = [
