@@ -1,6 +1,5 @@
 from telegram import (
     Update,
-    ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
@@ -8,7 +7,7 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from states import MAIN_MENU
+from config.states import MAIN_MENU
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
