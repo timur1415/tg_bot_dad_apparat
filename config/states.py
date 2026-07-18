@@ -7,9 +7,10 @@ GET_MONEY,#спрашиваю сколько потратил
 NO_IN_SP,
 GET_CRED,
 TOYS,
+TOYS_MACHINE_INFO,
 TANKS,
 BANKNOTE,
 RESTART,
 OPROS_MENU,
 GET_REK,
-) = range(13)
+) = range(14)

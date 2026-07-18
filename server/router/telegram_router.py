@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, Request, Response, status
 from fastapi.responses import FileResponse
@@ -9,6 +10,7 @@ from config.config import SECRET_TOKEN
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+TEMPLATE_INDEX = Path(__file__).resolve().parents[2] / "templates" / "index.html"
 
 
 @router.post("/telegram/webhook")
@@ -28,6 +30,8 @@ async def telegram_webhook(request: Request):
     await request.app.state.bot_app.update_queue.put(update)
     return Response(status_code=status.HTTP_200_OK)
 
-@router.get('/app')
+@router.get("/")
+@router.get("/app")
+@router.get("/mini-app")
 async def start_web_app(request: Request):
-    return FileResponse(path='templates/index.html')
+    return FileResponse(path=TEMPLATE_INDEX)

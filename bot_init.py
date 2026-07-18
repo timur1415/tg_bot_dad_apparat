@@ -21,6 +21,8 @@ from tg_bot.opros import (
     no_in_sp,
     tanks,
     toys,
+    toys_machine_info,
+    toys_machine_info_fallback,
     toys_text_fallback,
 )
 from tg_bot.start import start, start_opros
@@ -36,6 +38,7 @@ from config.states import (
     OPROS_MENU,
     TANKS,
     TOYS,
+    TOYS_MACHINE_INFO,
 )
 
 
@@ -65,6 +68,10 @@ def build_conversation_handler() -> ConversationHandler:
                 MessageHandler(filters.PHOTO, toys),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, toys_text_fallback),
                 CallbackQueryHandler(start, pattern="^back$"),
+            ],
+            TOYS_MACHINE_INFO: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, toys_machine_info),
+                MessageHandler(~filters.TEXT & ~filters.COMMAND, toys_machine_info_fallback),
             ],
             TANKS: [
                 MessageHandler(filters.CONTACT, get_phone_contact),
