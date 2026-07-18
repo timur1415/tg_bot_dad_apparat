@@ -14,6 +14,7 @@ def save_request(
     table_error: str | None,
     amount: str | None,
     requisites: str | None,
+    photo_file_id: str | None = None,
 ) -> tuple[int, str]:
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -27,6 +28,8 @@ def save_request(
             table_error=table_error,
             amount=amount,
             requisites=requisites,
+            photo_file_id=photo_file_id,
+            status="new",
             created_at=created_at,
         )
         session.add(request)

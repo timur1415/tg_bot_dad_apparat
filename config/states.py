@@ -12,4 +12,4 @@ BANKNOTE,
 RESTART,
 OPROS_MENU,
 GET_REK,
-) = range(12)
+) = range(13)

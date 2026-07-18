@@ -1,50 +1,34 @@
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    WebAppInfo
-)
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import (
     ContextTypes,
 )
 
-from config.states import MAIN_MENU
+from config.states import MAIN_MENU, OPROS_MENU
 
-from config.config import WEBHOOK_URL
+from config.config import ADMIN_ID, WEBHOOK_URL
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-    [
-        InlineKeyboardButton(
-            "Опрос",
-            callback_data="opros"
-        )
-    ],
-    [
-        InlineKeyboardButton(
-            "Админ панель",
-            web_app=WebAppInfo(
-                url=f"https://{WEBHOOK_URL}/app"
-            )
-        )
-    ],
-]
+    keyboard = [[InlineKeyboardButton("Опрос", callback_data="opros")]]
 
-markup = InlineKeyboardMarkup(keyboard)
+    user_id = update.effective_user.id if update.effective_user else None
+    if ADMIN_ID and user_id == ADMIN_ID:
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    "Админ панель", web_app=WebAppInfo(url=f"{WEBHOOK_URL}/app")
+                )
+            ]
+        )
+
+    markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="добро пожаловать",
+        text="Добро пожаловать!",
         reply_markup=markup,
     )
     return MAIN_MENU
 
-async def opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    if query:
-        await query.edit_message_text(
-            text="добро пожаловать",
-            reply_markup=markup,
-        )
 
 async def start_opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
@@ -75,14 +59,14 @@ async def start_opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = InlineKeyboardMarkup(keyboard)
     if query:
         await query.edit_message_text(
-            text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
+            text=f"{update.effective_user.first_name}, что случилось с аппаратом?",
             reply_markup=markup,
         )
 
     else:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"добро пожаловать {update.effective_user.first_name},что случилось?",
+            text=f"{update.effective_user.first_name}, что случилось с аппаратом?",
             reply_markup=markup,
         )
-    return MAIN_MENU
+    return OPROS_MENU

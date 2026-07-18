@@ -21,8 +21,9 @@ from tg_bot.opros import (
     no_in_sp,
     tanks,
     toys,
+    toys_text_fallback,
 )
-from tg_bot.start import start
+from tg_bot.start import start, start_opros
 from config.states import (
     BANKNOTE,
     GET_ADDRESS,
@@ -32,6 +33,7 @@ from config.states import (
     GET_TABLE_EROR,
     MAIN_MENU,
     NO_IN_SP,
+    OPROS_MENU,
     TANKS,
     TOYS,
 )
@@ -41,7 +43,8 @@ def build_conversation_handler() -> ConversationHandler:
     return ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            MAIN_MENU: [
+            MAIN_MENU: [CallbackQueryHandler(start_opros, pattern="^opros$")],
+            OPROS_MENU: [
                 CallbackQueryHandler(toys, pattern="^toys$"),
                 CallbackQueryHandler(get_address, pattern="^dont_clos$"),
                 CallbackQueryHandler(get_address, pattern="^tap$"),
@@ -59,7 +62,8 @@ def build_conversation_handler() -> ConversationHandler:
             GET_MONEY: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_money)],
             NO_IN_SP: [MessageHandler(filters.TEXT & ~filters.COMMAND, no_in_sp)],
             TOYS: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, toys),
+                MessageHandler(filters.PHOTO, toys),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, toys_text_fallback),
                 CallbackQueryHandler(start, pattern="^back$"),
             ],
             TANKS: [

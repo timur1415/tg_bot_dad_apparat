@@ -1,7 +1,7 @@
 import os
 import logging
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
@@ -34,3 +34,18 @@ def init_db() -> None:
     import db.models as models  # noqa: F401 - Import ensures model metadata is registered.
 
     Base.metadata.create_all(bind=engine)
+
+    inspector = inspect(engine)
+    if "requests" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("requests")}
+    with engine.begin() as connection:
+        if "status" not in columns:
+            connection.execute(
+                text("ALTER TABLE requests ADD COLUMN status VARCHAR NOT NULL DEFAULT 'new'")
+            )
+        if "photo_file_id" not in columns:
+            connection.execute(
+                text("ALTER TABLE requests ADD COLUMN photo_file_id VARCHAR")
+            )

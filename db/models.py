@@ -16,4 +16,6 @@ class Request(Base):
     table_error: Mapped[str | None] = mapped_column(String, nullable=True)
     amount: Mapped[str | None] = mapped_column(String, nullable=True)
     requisites: Mapped[str | None] = mapped_column(String, nullable=True)
+    photo_file_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    status: Mapped[str] = mapped_column(String, nullable=False, default="new")
     created_at: Mapped[str] = mapped_column(String, nullable=False)

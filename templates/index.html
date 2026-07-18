@@ -623,6 +623,16 @@
       word-break: break-word;
     }
 
+    .request-photo {
+      width: 100%;
+      max-height: 360px;
+      display: block;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
     .info-list {
       display: grid;
       gap: 11px;
@@ -1088,6 +1098,11 @@
           item.requisites ??
           "Не указано",
 
+        photo_url:
+          item.photo_file_id
+            ? `/api/admin/requests/${encodeURIComponent(item.id)}/photo`
+            : "",
+
         status:
           statusConfig[item.status]
             ? item.status
@@ -1480,6 +1495,25 @@
             ${escapeHtml(request.requisites)}
           </div>
         </section>
+
+        ${
+          request.photo_url
+            ? `
+              <section class="details-section">
+                <p class="section-title">
+                  Фото от клиента
+                </p>
+
+                <img
+                  class="request-photo"
+                  src="${request.photo_url}"
+                  alt="Фото по заявке"
+                  loading="lazy"
+                />
+              </section>
+            `
+            : ""
+        }
 
         <section class="details-section">
           <p class="section-title">

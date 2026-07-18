@@ -1,17 +1,12 @@
-import logging
-from bot_init import create_application
-from db.db import init_db
+import uvicorn
 
+from server.fastapi_init import init_fastapi_app
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
-logger = logging.getLogger(__name__)
-
+app = init_fastapi_app()
 
 if __name__ == "__main__":
-    init_db()
-    application = create_application()
-
-    application.run_polling()
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000
+    )
