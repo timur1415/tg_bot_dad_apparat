@@ -27,6 +27,12 @@ from db.users_crud import save_request
 
 load_dotenv()
 
+POWER_CYCLE_HINT = (
+    "Попробуйте отключить автомат от сети и включить снова.\n"
+    "Если не поможет, полностью отключите питание и отправьте адрес с номером автомата.\n\n"
+    "Пример: Москва, ул. Пушкина, д. 10, ТЦ, автомат №3"
+)
+
 
 def _admin_chat_id() -> int | None:
     raw_id = os.getenv("ADMIN_ID") or os.getenv("MY_ID")
@@ -79,7 +85,7 @@ async def banknote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = ReplyKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Какой сейчас цвет индикатора на купюрнике: красный или зеленый?",
+        text="Какой сейчас цвет индикатора купюроприемника? Выберите: красный или зеленый.",
         reply_markup=markup,
     )
 
@@ -93,7 +99,7 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["trable"] = dic_problems[query.data]
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Отправьте, пожалуйста, фото застрявшей игрушки.",
+            text="Пришлите, пожалуйста, фото застрявшей игрушки.",
             reply_markup=ReplyKeyboardRemove(),
         )
         return TOYS
@@ -102,7 +108,7 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not message or not message.photo:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Нужна именно фотография. Пришлите фото застрявшей игрушки.",
+            text="Нужна именно фотография. Пришлите фото застрявшей игрушки одним сообщением.",
         )
         return TOYS
 
@@ -111,7 +117,7 @@ async def toys(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Теперь отправьте отдельным сообщением адрес и номер автомата.",
+        text="Отлично. Теперь отправьте отдельным сообщением адрес и номер автомата.",
     )
     return TOYS_MACHINE_INFO
 
@@ -123,7 +129,7 @@ async def toys_machine_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not photo_file_id:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Сначала пришлите фото застрявшей игрушки.",
+            text="Сначала пришлите фото застрявшей игрушки, затем укажите адрес и номер автомата.",
         )
         return TOYS
 
@@ -164,7 +170,7 @@ async def toys_machine_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def toys_text_fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Пожалуйста, отправьте фото застрявшей игрушки, чтобы создать заявку.",
+        text="Чтобы создать заявку, отправьте фото застрявшей игрушки.",
     )
     return TOYS
 
@@ -172,7 +178,7 @@ async def toys_text_fallback(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def toys_machine_info_fallback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Отправьте, пожалуйста, текстом адрес и номер автомата.",
+        text="Отправьте текстом адрес и номер автомата одним сообщением.",
     )
     return TOYS_MACHINE_INFO
 
@@ -188,7 +194,7 @@ async def get_table_eror(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=open("photo/table.jpg", "rb"),
-        caption="Посмотрите, пожалуйста, что горит на табло и выберете на клавиатуре",
+        caption="Посмотрите, что горит на табло, и выберите вариант на клавиатуре.",
         reply_markup=markup,
     )
     return GET_ADDRESS
@@ -199,7 +205,7 @@ async def no_in_sp(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Пожалуйста, сформулируйте проблему, чтобы мы могли внести её в бота.",
+        text="Опишите проблему своими словами, чтобы мы добавили ее в бота.",
         reply_markup=ReplyKeyboardRemove(),
     )
     return GET_ADDRESS
@@ -213,7 +219,7 @@ async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["trable"] = dic_problems[query.data]
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, ❗️ПОЛНОСТЬЮ ОТКЛЮЧИТЕ ПИТАНИЕ❗️ и сообщите адрес и номер автомата.\n\nгород/улица номер.",
+            text=POWER_CYCLE_HINT,
             reply_markup=ReplyKeyboardRemove(),
         )
     else:
@@ -230,7 +236,7 @@ async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
             context.user_data["trable"] = message_text
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Попробуйте отключить аппарат от розетки и снова включить. Если это не поможет, ❗️ПОЛНОСТЬЮ ОТКЛЮЧИТЕ ПИТАНИЕ❗️ и сообщите адрес и номер автомата.\n\nгород/улица номер.",
+            text=POWER_CYCLE_HINT,
             reply_markup=ReplyKeyboardRemove(),
         )
     return GET_MONEY
@@ -239,7 +245,7 @@ async def get_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["address"] = update.effective_message.text
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text="Сколько вы потратили?"
+        chat_id=update.effective_chat.id, text="Укажите сумму, которую вы потратили(если не тратили то 0)."
     )
     return GET_REK
 
@@ -274,7 +280,7 @@ async def get_phone_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not phone:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Не удалось прочитать номер из контакта. Нажмите кнопку и отправьте контакт еще раз.",
+            text="Не удалось прочитать номер. Нажмите кнопку и отправьте контакт еще раз.",
         )
         return TANKS
 
@@ -283,7 +289,7 @@ async def get_phone_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Выберите способ возврата:",
+        text="Выберите удобный способ возврата:",
         reply_markup=markup,
     )
     return GET_CRED
@@ -294,7 +300,7 @@ async def get_phone_text_fallback(update: Update, context: ContextTypes.DEFAULT_
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Номер нужно отправить через кнопку 'Поделиться номером', обычный текст не подходит.",
+        text="Номер нужно отправить через кнопку 'Поделиться номером'. Текстом номер не принимается.",
         reply_markup=markup,
     )
     return TANKS
@@ -307,13 +313,13 @@ async def get_refund_method(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if method not in allowed_methods:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Выберите способ из кнопок: По номеру телефона или По номеру карты.",
+            text="Выберите способ из кнопок: 'По номеру телефона' или 'По номеру карты'.",
         )
         return GET_CRED
 
     context.user_data["refund_method"] = method
     prompt_text = (
-        "Отправьте одним сообщением:  имя получателя и банк."
+        "Отправьте одним сообщением: имя получателя и банк."
         if method == "По номеру телефона"
         else "Отправьте одним сообщением: номер карты и имя получателя."
     )
@@ -349,8 +355,8 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=(
-            "Спасибо за заявку. Скоро всё вернем.\n\n"
-            "❗️ ПРОСИМ ВАС: отсоедините автомат от розетки."
+            "Спасибо, заявку приняли. Скоро свяжемся и поможем с возвратом.\n\n"
+            "Пожалуйста, до решения вопроса отключите автомат от розетки."
         ),
         reply_markup=markup,
     )

@@ -24,7 +24,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Добро пожаловать!",
+        text=(
+            "Привет! Я помогу быстро оформить заявку по автомату.\n"
+            "Выберите действие ниже."
+        ),
         reply_markup=markup,
     )
     return MAIN_MENU
@@ -59,14 +62,18 @@ async def start_opros(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = InlineKeyboardMarkup(keyboard)
     if query:
         await query.edit_message_text(
-            text=f"{update.effective_user.first_name}, что случилось с аппаратом?",
+            text=(
+                f"{update.effective_user.first_name}, выберите проблему из списка ниже."
+            ),
             reply_markup=markup,
         )
 
     else:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"{update.effective_user.first_name}, что случилось с аппаратом?",
+            text=(
+                f"{update.effective_user.first_name}, выберите проблему из списка ниже."
+            ),
             reply_markup=markup,
         )
     return OPROS_MENU
