@@ -13,34 +13,36 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800;900&display=swap");
+
     :root {
-      --bg: #fff8f4;
+      --bg: #f2f6fb;
       --card: #ffffff;
-      --card-soft: #fff0eb;
-      --text: #261c19;
-      --muted: #8d7770;
-      --border: #f0ddd5;
+      --card-soft: #f3f8ff;
+      --text: #162033;
+      --muted: #66718a;
+      --border: #d8e2f0;
 
-      --pink: #ff668b;
-      --pink-dark: #ec4770;
-      --pink-soft: #ffe3eb;
+      --pink: #ff4f8b;
+      --pink-dark: #e83874;
+      --pink-soft: #ffe3ef;
 
-      --orange: #f59b3a;
-      --orange-soft: #fff0dc;
+      --orange: #ea8a1d;
+      --orange-soft: #fff2de;
 
-      --blue: #4088f4;
-      --blue-soft: #e7f0ff;
+      --blue: #2678f2;
+      --blue-soft: #e4eeff;
 
-      --purple: #9661c8;
-      --purple-soft: #f2e8ff;
+      --purple: #7a5bf7;
+      --purple-soft: #ebe5ff;
 
-      --green: #249c6b;
-      --green-soft: #e2f7ed;
+      --green: #1f9b6b;
+      --green-soft: #dcf8ec;
 
-      --danger: #e95757;
-      --danger-soft: #ffe8e8;
+      --danger: #df4b4b;
+      --danger-soft: #ffe4e4;
 
-      --shadow: 0 16px 45px rgba(87, 50, 37, 0.10);
+      --shadow: 0 22px 45px rgba(20, 42, 81, 0.11);
       --radius-large: 26px;
       --radius-medium: 18px;
       --radius-small: 14px;
@@ -65,19 +67,25 @@
 
       background:
         radial-gradient(
-          circle at top right,
-          rgba(255, 102, 139, 0.17),
-          transparent 420px
+          circle at top left,
+          rgba(38, 120, 242, 0.22),
+          transparent 430px
         ),
         radial-gradient(
-          circle at bottom left,
-          rgba(245, 155, 58, 0.14),
-          transparent 400px
+          circle at bottom right,
+          rgba(122, 91, 247, 0.18),
+          transparent 450px
+        ),
+        linear-gradient(
+          180deg,
+          #f7fbff 0%,
+          #f1f6ff 50%,
+          #eef4fb 100%
         ),
         var(--bg);
 
       font-family:
-        Inter,
+        "Manrope",
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -110,6 +118,8 @@
       justify-content: space-between;
       gap: 14px;
       margin-bottom: 18px;
+
+      animation: rise-in 0.45s ease-out;
     }
 
     .brand {
@@ -127,12 +137,12 @@
       display: grid;
       place-items: center;
 
-      border-radius: 18px;
+      border-radius: 16px;
 
-      background: linear-gradient(145deg, #ff8ca7, #ff557e);
+      background: linear-gradient(145deg, #2a86ff, #7a5bf7);
 
       box-shadow:
-        0 12px 25px rgba(255, 85, 126, 0.28);
+        0 12px 25px rgba(62, 87, 209, 0.3);
 
       font-size: 27px;
       transform: rotate(-3deg);
@@ -164,11 +174,11 @@
 
       padding: 9px 12px;
 
-      border: 1px solid rgba(255, 102, 139, 0.28);
+      border: 1px solid rgba(38, 120, 242, 0.3);
       border-radius: 999px;
 
-      color: var(--pink-dark);
-      background: rgba(255, 255, 255, 0.78);
+      color: #1a4fa5;
+      background: rgba(237, 246, 255, 0.9);
 
       font-size: 10px;
       font-weight: 900;
@@ -190,13 +200,15 @@
       min-height: 112px;
       padding: 17px;
 
-      border: 1px solid rgba(240, 221, 213, 0.92);
+      border: 1px solid rgba(216, 226, 240, 0.95);
       border-radius: 22px;
 
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: 0 8px 25px rgba(87, 50, 37, 0.06);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 30px rgba(15, 44, 91, 0.08);
 
       backdrop-filter: blur(12px);
+
+      animation: rise-in 0.45s ease-out;
     }
 
     .stat-card::after {
@@ -264,8 +276,8 @@
       border: 1px solid var(--border);
       border-radius: 21px;
 
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: 0 10px 28px rgba(87, 50, 37, 0.06);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 30px rgba(15, 44, 91, 0.08);
 
       backdrop-filter: blur(14px);
     }
@@ -289,8 +301,8 @@
     }
 
     .control:focus {
-      border-color: rgba(255, 102, 139, 0.7);
-      box-shadow: 0 0 0 4px rgba(255, 102, 139, 0.11);
+      border-color: rgba(38, 120, 242, 0.75);
+      box-shadow: 0 0 0 4px rgba(38, 120, 242, 0.13);
     }
 
     .refresh-button {
@@ -301,9 +313,9 @@
       border-radius: var(--radius-small);
 
       color: #ffffff;
-      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      background: linear-gradient(135deg, #2678f2, #7a5bf7);
 
-      box-shadow: 0 8px 18px rgba(236, 71, 112, 0.22);
+      box-shadow: 0 10px 20px rgba(53, 101, 222, 0.3);
 
       font-weight: 850;
       cursor: pointer;
@@ -330,10 +342,12 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-large);
 
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.94);
       box-shadow: var(--shadow);
 
       backdrop-filter: blur(16px);
+
+      animation: rise-in 0.5s ease-out;
     }
 
     .list-panel {
@@ -387,18 +401,20 @@
       transition:
         background 0.18s ease,
         border-color 0.18s ease,
-        transform 0.18s ease;
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
     }
 
     .request-card:hover {
       background: var(--card-soft);
+      box-shadow: 0 8px 18px rgba(21, 58, 123, 0.08);
     }
 
     .request-card.active {
-      border-color: rgba(255, 102, 139, 0.31);
+      border-color: rgba(38, 120, 242, 0.35);
 
       background:
-        linear-gradient(145deg, #fff5f8, #fffaf7);
+        linear-gradient(145deg, #eff5ff, #f6f2ff);
 
       transform: translateX(2px);
     }
@@ -476,6 +492,7 @@
       overflow: hidden;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
 
       margin: 0 0 13px;
 
@@ -506,6 +523,17 @@
 
       min-height: 500px;
       padding: 20px;
+    }
+
+    @media (min-width: 921px) {
+      .details-panel {
+        height: calc(100dvh - max(16px, env(safe-area-inset-top)) - 16px);
+        min-height: 0;
+        overflow-y: auto;
+
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
     }
 
     .empty-state,
@@ -615,7 +643,7 @@
 
       border-radius: 16px;
 
-      background: var(--card-soft);
+      background: #eef4ff;
 
       font-size: 13px;
       line-height: 1.55;
@@ -659,7 +687,7 @@
     }
 
     .info-value a {
-      color: var(--pink-dark);
+      color: #225fd0;
       text-decoration: none;
     }
 
@@ -677,7 +705,7 @@
       border-radius: 14px;
 
       color: #ffffff;
-      background: var(--text);
+      background: linear-gradient(135deg, #192b4a, #2a4f8d);
 
       font-weight: 850;
       cursor: pointer;
@@ -703,9 +731,9 @@
       background:
         linear-gradient(
           90deg,
-          #f8eee9 25%,
-          #fff8f4 37%,
-          #f8eee9 63%
+          #e9f1ff 25%,
+          #f8fbff 37%,
+          #e9f1ff 63%
         );
 
       background-size: 400% 100%;
@@ -723,6 +751,18 @@
       }
     }
 
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -736,7 +776,7 @@
       border-radius: 14px;
 
       color: #ffffff;
-      background: rgba(38, 28, 25, 0.95);
+      background: rgba(21, 38, 68, 0.96);
 
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 
