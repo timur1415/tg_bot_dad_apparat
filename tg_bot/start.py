@@ -5,18 +5,19 @@ from telegram.ext import (
 
 from config.states import MAIN_MENU, OPROS_MENU
 
-from config.config import ADMIN_ID, WEBHOOK_URL
+from config.config import ADMIN_ID1, MY_ID, WEBHOOK_URL
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("Опрос", callback_data="opros")]]
+    keyboard = [[InlineKeyboardButton("Опрос", callback_data="opros")],
+                [InlineKeyboardButton("поддержка", url='https://t.me/poimaika_help')]]
 
     user_id = update.effective_user.id if update.effective_user else None
-    if ADMIN_ID and user_id == ADMIN_ID:
+    if WEBHOOK_URL and user_id in {ADMIN_ID1, MY_ID}:
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "Админ панель", web_app=WebAppInfo(url=f"{WEBHOOK_URL}/app")
+                    "Мини апп", web_app=WebAppInfo(url=f"{WEBHOOK_URL}/app")
                 )
             ]
         )

@@ -20,10 +20,10 @@ from config.states import (
     GET_REK,
 )
 
-import os
 from dotenv import load_dotenv
 from tg_bot.problems import dic_problems
 from db.users_crud import save_request
+from config.config import ADMIN_ID1, MY_ID, WEBHOOK_URL
 
 load_dotenv()
 
@@ -35,13 +35,23 @@ POWER_CYCLE_HINT = (
 
 
 def _admin_chat_id() -> int | None:
-    raw_id = os.getenv("ADMIN_ID") or os.getenv("MY_ID")
-    if not raw_id:
+    return ADMIN_ID1 or None
+
+
+def _my_chat_id() -> int | None:
+    return MY_ID or None
+
+
+def _is_custom_problem(problem: str | None) -> bool:
+    return bool(problem) and problem not in dic_problems.values()
+
+
+def _build_mini_app_markup() -> InlineKeyboardMarkup | None:
+    if not WEBHOOK_URL:
         return None
-    try:
-        return int(raw_id)
-    except ValueError:
-        return None
+    return InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Открыть мини апп", url=f"{WEBHOOK_URL}/mini-app")]]
+    )
 
 
 def _build_admin_text(context_data: dict, request_id: int, created_at: str, user) -> str:
@@ -158,9 +168,10 @@ async def toys_machine_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     admin_id = _admin_chat_id()
+    admin_markup = _build_mini_app_markup()
     if admin_id and user:
         text = _build_admin_text(context.user_data, request_id, created_at, user)
-        await context.bot.send_message(chat_id=admin_id, text=text)
+        await context.bot.send_message(chat_id=admin_id, text=text, reply_markup=admin_markup)
         await context.bot.send_photo(chat_id=admin_id, photo=photo_file_id)
 
     context.user_data.clear()
@@ -361,15 +372,22 @@ async def tanks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=markup,
     )
 
+    problem_text = context.user_data.get("trable")
     admin_id = _admin_chat_id()
-    if admin_id and user:
-        text = _build_admin_text(context.user_data, request_id, created_at, user)
-        await context.bot.send_message(chat_id=admin_id, text=text)
+    my_id = _my_chat_id()
+    admin_markup = _build_mini_app_markup()
 
-        if context.user_data.get("trable") not in dic_problems.values():
+    if user:
+        text = _build_admin_text(context.user_data, request_id, created_at, user)
+
+        if admin_id:
+            await context.bot.send_message(chat_id=admin_id, text=text, reply_markup=admin_markup)
+
+        if _is_custom_problem(problem_text) and my_id:
+            await context.bot.send_message(chat_id=my_id, text=text, reply_markup=admin_markup)
             await context.bot.send_message(
-                chat_id=admin_id,
-                text=f"Добавить проблему в бота:\n\n{context.user_data.get('trable')}",
+                chat_id=my_id,
+                text=f"Заявка из пункта 'Нет в этом списке':\n\n{problem_text}",
             )
 
     context.user_data.clear()

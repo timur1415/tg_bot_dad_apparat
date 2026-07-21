@@ -14,7 +14,10 @@ def _env_int(name: str, default: int = 0) -> int:
 		return default
 
 
-ADMIN_ID = _env_int("ADMIN_ID", 0)
+ADMIN_ID1 = _env_int("ADMIN_ID1", 0)
+MY_ID = _env_int("MY_ID", 0)
+# Backward-compatible alias for modules that still import ADMIN_ID.
+ADMIN_ID = ADMIN_ID1
 REVIEW = _env_int("REVIEW", 0)
 
 
@@ -27,3 +30,4 @@ def _env(name: str, default: str = "") -> str:
 WEBHOOK_URL = _env("WEBHOOK_URL")
 SECRET_TOKEN = _env("SECRET_TOKEN")
 TELEGRAM_WEBHOOK_PATH = _env("TELEGRAM_WEBHOOK_PATH", "/telegram/webhook")
+ADMIN_USERNAME = _env("ADMIN_USERNAME", "")
